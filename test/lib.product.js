@@ -15,6 +15,7 @@ function checklist(result) {
   result.mfs.should.be.a('string');
   result.pn.should.be.a('string');
   result.description.should.be.a('string');
+  result.currency.should.be.a('string');
   result.lead.should.be.a('boolean');
   result.rohs.should.be.a('boolean');
   result.attributes.should.be.a('array');
