@@ -217,9 +217,20 @@ var Product = function () {
       return attrs;
     }
   }, {
-    key: 'getPriceStores',
-    value: function getPriceStores($, initFields) {
+    key: 'getCurrency',
+    value: function getCurrency($) {
       var that = this;
+      if ($('.pricing-description').length != 0) {
+        return 'CNY';
+      } else {
+        return 'USD';
+      }
+    }
+  }, {
+    key: 'getPriceStores',
+    value: function getPriceStores($, fields) {
+      var that = this;
+      fields.currency = that.getCurrency($);
       var dollars = $('.catalog-pricing tr');
       var priceCollection = [];
       $('.catalog-pricing tr').each(function (i, elem) {
