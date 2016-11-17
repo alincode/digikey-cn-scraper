@@ -53,7 +53,7 @@ var Product = function () {
       this.getInfoRows($, fields);
       this.getSubInfoRows($, fields);
       fields.attributes = this.getAttrRows($);
-      fields.documents = this.getDocuments($);
+      if ($('.lnkDatasheet').length != 0) fields.documents = this.getDocuments($);
       fields.imageUrl = this.getImageUrl($);
       return R.map(function (field) {
         return field === '' ? undefined : field;
@@ -92,7 +92,7 @@ var Product = function () {
           val = that.getData(val);
           if (i == 1) fields.sku = val;
           if (i == 2) fields.amount = that.getAmount(val);
-          if (i == 3) fields.mfs = val;
+          if (i == 3) fields.mfs = _lodash2.default.trim(val.split('[')[0]);
           if (i == 4) fields.pn = val;
           if (i == 5) fields.description = val;
           if (i == 6) {
@@ -126,9 +126,9 @@ var Product = function () {
           var isExistPkg = title.indexOf('标准包装') != -1;
           if (isExistPkg) fields.pkg = val;
           if (title.indexOf('包装') != -1 && !isExistPkg) {
-            fields.pkg_type = val;
+            fields.pkg_type = val.split('[')[0];
           }
-          if (title == '类别') fields.category = val;
+          if (title == '类别') fields.category = _lodash2.default.trim(val.split('[')[0]);
           if (title == '其它名称') fields.param = val;
         });
       } catch (e) {
