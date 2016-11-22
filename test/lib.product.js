@@ -107,4 +107,23 @@ describe('product page', function() {
       done(e);
     }
   });
+
+  it('case 5', async(done) => {
+    try {
+      let html = await getHtml(
+        'sample5.html'
+      );
+      let digikey = new Digikey(html,
+        'http://www.digikey.com.cn/search/zh/LM358ADGKR/296-18455-1-ND?recordId=809890'
+      );
+      let result = await digikey.getResult();
+      result.should.have.keys(ProductFullFields);
+      checklist(result);
+      result.documents.should.be.a('array');
+      result.documents.length.should.above(0);
+      done();
+    } catch (e) {
+      done(e);
+    }
+  });
 });
