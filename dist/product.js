@@ -20,6 +20,14 @@ var cheerio = require('cheerio');
 var R = require('ramda');
 var htmlToText = require('html-to-text');
 
+
+function functionName() {
+  var data = htmlToText.fromString(htmlString, {
+    wordwrap: 130
+  });
+  return data;
+}
+
 var Product = function () {
   function Product(html, url) {
     _classCallCheck(this, Product);
@@ -73,9 +81,15 @@ var Product = function () {
     key: 'getAmount',
     value: function getAmount(val) {
       var that = this;
-      var amount = that.getData(val.split('可立即发货')[0].split(':')[1]);
-      amount = amount.replace(',', '');
-      return parseInt(amount);
+      var result = void 0;
+      if (val == '0') {
+        result = val;
+      } else {
+        var amount = getData(val.split('可立即发货')[0].split(':')[1]);
+        amount = amount.replace(',', '');
+        result = amount;
+      }
+      return parseInt(result);
     }
   }, {
     key: 'getInfoRows',
@@ -89,7 +103,7 @@ var Product = function () {
           if (i == 0) return;
           var elemHtml = $(elem).html();
           var val = $(elem).find('td').html();
-          val = that.getData(val);
+          val = getData(val);
           if (i == 1) fields.sku = val;
           if (i == 2) fields.amount = that.getAmount(val);
           if (i == 3) fields.mfs = _lodash2.default.trim(val.split('[')[0]);
@@ -121,8 +135,8 @@ var Product = function () {
           var elemHtml = $(elem).html();
           var title = $(elem).find('th').html();
           var val = $(elem).find('td').html();
-          title = that.getData(title);
-          val = that.getData(val);
+          title = getData(title);
+          val = getData(val);
           var isExistPkg = title.indexOf('标准包装') != -1;
           if (isExistPkg) fields.pkg = val;
           if (title.indexOf('包装') != -1 && !isExistPkg) {
@@ -145,14 +159,6 @@ var Product = function () {
       } catch (e) {
         return;
       }
-    }
-  }, {
-    key: 'getData',
-    value: function getData(htmlString) {
-      var data = htmlToText.fromString(htmlString, {
-        wordwrap: 130
-      });
-      return data;
     }
   }, {
     key: 'getArrayData',
@@ -200,12 +206,12 @@ var Product = function () {
       var attrs = [];
 
       $('#SpecificationTable th').each(function (i, elem) {
-        attrThRows[i] = that.getData($(this).html());
+        attrThRows[i] = getData($(this).html());
         attrThRows[i] = attrThRows[i].split('?')[0];
       });
 
       $('#SpecificationTable td').each(function (i, elem) {
-        attrTdRows[i] = that.getData($(this).html());
+        attrTdRows[i] = getData($(this).html());
       });
 
       _lodash2.default.forEach(attrThRows, function (value, index) {
@@ -233,12 +239,23 @@ var Product = function () {
       fields.currency = that.getCurrency($);
       var dollars = $('.catalog-pricing tr');
       var priceCollection = [];
+
+      // 已过时的产品，请打电话向得捷电子询问详情。
+      if ($('.beablock-notice').length != 0) {
+        var warmMessage = getData($('.beablock-notice').html());
+        console.log("==========> warmMessage:", warmMessage);
+        $('.catalog-pricing tr').remove();
+        return [];
+      }
+
       $('.catalog-pricing tr').each(function (i, elem) {
         var obj = {};
         $(elem).find('td').each(function (i, subelem) {
           var val = $(subelem).html();
           if (i == 0) obj.amount = parseInt(val.replace(',', ''));
           if (i == 1) obj.unitPrice = val.substring(7);
+
+          if (val.indexOf('电询') != -1) return;
           if (i == 2) priceCollection.push(obj);
         });
       });
