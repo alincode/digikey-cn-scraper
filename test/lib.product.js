@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import {
-  ProductFields, ProductFields2, ProductFullFields
+  ProductFields, ProductFields2, ProductFields3, ProductFullFields
 }
 from './field';
 
@@ -20,11 +20,15 @@ function checklist(result) {
   result.attributes.should.be.a('array');
   result.attributes.length.should.above(0);
   result.attributes[0].should.have.keys(['key', 'value']);
+}
+
+function checklistPriceStores(result) {
   result.priceStores.should.be.a('array');
   result.priceStores.length.should.above(0);
   result.priceStores[0].should.have.keys(['amount', 'unitPrice']);
   result.priceStores[0].amount.should.be.a('number');
 }
+
 
 function getHtml(fileName) {
   return new Promise(function(resolve, reject) {
@@ -47,6 +51,7 @@ describe('product page', function() {
       let result = await digikey.getResult();
       result.should.have.keys(ProductFields);
       checklist(result);
+      checklistPriceStores(result);
       done();
     } catch (e) {
       done(e);
@@ -64,12 +69,14 @@ describe('product page', function() {
       let result = await digikey.getResult();
       result.should.have.keys(ProductFields2);
       checklist(result);
+      checklistPriceStores(result);
       done();
     } catch (e) {
       done(e);
     }
   });
 
+  // 请注意，此零件的订单不能取消，即使发货时间比预计的时间延迟。
   it('case 3', async(done) => {
     try {
       let html = await getHtml(
@@ -81,6 +88,7 @@ describe('product page', function() {
       let result = await digikey.getResult();
       result.should.have.keys(ProductFullFields);
       checklist(result);
+      checklistPriceStores(result);
       result.documents.should.be.a('array');
       result.documents.length.should.above(0);
       done();
@@ -100,6 +108,7 @@ describe('product page', function() {
       let result = await digikey.getResult();
       result.should.have.keys(ProductFullFields);
       checklist(result);
+      checklistPriceStores(result);
       result.documents.should.be.a('array');
       result.documents.length.should.above(0);
       done();
@@ -118,6 +127,46 @@ describe('product page', function() {
       );
       let result = await digikey.getResult();
       result.should.have.keys(ProductFullFields);
+      checklist(result);
+      checklistPriceStores(result);
+      result.documents.should.be.a('array');
+      result.documents.length.should.above(0);
+      done();
+    } catch (e) {
+      done(e);
+    }
+  });
+
+  it('case 6', async(done) => {
+    try {
+      let html = await getHtml(
+        'sample6.html'
+      );
+      let digikey = new Digikey(html,
+        'http://www.digikey.com.cn/search/zh/LM358ADGKR/296-18455-1-ND?recordId=809890'
+      );
+      let result = await digikey.getResult();
+      result.should.have.keys(ProductFields);
+      checklist(result);
+      checklistPriceStores(result);
+      result.documents.should.be.a('array');
+      result.documents.length.should.above(0);
+      done();
+    } catch (e) {
+      done(e);
+    }
+  });
+
+  it('case 7 - 過時的產品', async(done) => {
+    try {
+      let html = await getHtml(
+        'sample7.html'
+      );
+      let digikey = new Digikey(html,
+        'http://www.digikey.com.cn/search/zh/H100/BKH100-ND?recordId=2754137'
+      );
+      let result = await digikey.getResult();
+      result.should.have.keys(ProductFields3);
       checklist(result);
       result.documents.should.be.a('array');
       result.documents.length.should.above(0);
