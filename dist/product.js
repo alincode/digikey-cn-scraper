@@ -21,7 +21,7 @@ var R = require('ramda');
 var htmlToText = require('html-to-text');
 
 
-function functionName() {
+function getData(htmlString) {
   var data = htmlToText.fromString(htmlString, {
     wordwrap: 130
   });
@@ -240,12 +240,13 @@ var Product = function () {
       var dollars = $('.catalog-pricing tr');
       var priceCollection = [];
 
-      // 已过时的产品，请打电话向得捷电子询问详情。
+      // warmMessage
       if ($('.beablock-notice').length != 0) {
         var warmMessage = getData($('.beablock-notice').html());
-        console.log("==========> warmMessage:", warmMessage);
-        $('.catalog-pricing tr').remove();
-        return [];
+        if (warmMessage.indexOf('已过时的产品') != -1) {
+          $('.catalog-pricing tr').remove();
+          return [];
+        }
       }
 
       $('.catalog-pricing tr').each(function (i, elem) {
@@ -254,8 +255,6 @@ var Product = function () {
           var val = $(subelem).html();
           if (i == 0) obj.amount = parseInt(val.replace(',', ''));
           if (i == 1) obj.unitPrice = val.substring(7);
-
-          if (val.indexOf('电询') != -1) return;
           if (i == 2) priceCollection.push(obj);
         });
       });
