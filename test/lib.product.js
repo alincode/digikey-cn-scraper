@@ -175,4 +175,23 @@ describe('product page', function() {
       done(e);
     }
   });
+
+  it('case 8', async(done) => {
+    try {
+      let html = await getHtml(
+        'sample8.html'
+      );
+      let digikey = new Digikey(html,
+        'http://www.digikey.com.cn/search/zh/VLP-500-F/492-1517-ND?recordId=3091702'
+      );
+      let result = await digikey.getResult();
+      result.should.have.keys(ProductFields3);
+      checklist(result);
+      result.documents.should.be.a('array');
+      result.documents.length.should.above(0);
+      done();
+    } catch (e) {
+      done(e);
+    }
+  });
 });
