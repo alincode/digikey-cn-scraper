@@ -1,7 +1,7 @@
 {
   "name": "digikey-cn-scraper",
   "private": "true",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "scraper",
   "main": "dist/product.js",
   "scripts": {
