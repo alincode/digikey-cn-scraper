@@ -79,16 +79,8 @@ var Product = function () {
     }
   }, {
     key: 'getAmount',
-    value: function getAmount(val) {
-      var that = this;
-      var result = void 0;
-      if (val == '0') {
-        result = val;
-      } else {
-        var amount = getData(val.split('可立即发货')[0].split(':')[1]);
-        amount = amount.replace(',', '');
-        result = amount;
-      }
+    value: function getAmount($) {
+      var result = $('#hiddenQtyAvailable').html();
       return parseInt(result);
     }
   }, {
@@ -105,7 +97,7 @@ var Product = function () {
           var val = $(elem).find('td').html();
           val = getData(val);
           if (i == 1) fields.sku = val;
-          if (i == 2) fields.amount = that.getAmount(val);
+          if (i == 2) fields.amount = that.getAmount($);
           if (i == 3) fields.mfs = _lodash2.default.trim(val.split('[')[0]);
           if (i == 4) fields.pn = val;
           if (i == 5) fields.description = val;
@@ -244,6 +236,9 @@ var Product = function () {
       if ($('.beablock-notice').length != 0) {
         var warmMessage = getData($('.beablock-notice').html());
         if (warmMessage.indexOf('已过时的产品') != -1) {
+          $('.catalog-pricing tr').remove();
+          return [];
+        } else if (warmMessage.indexOf('不再生产的版本') != -1) {
           $('.catalog-pricing tr').remove();
           return [];
         }
