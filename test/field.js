@@ -14,6 +14,11 @@ module.exports = {
     'priceStores', 'rohs', 'lead', 'imageUrl', 'category', 'currency',
     'pkg', 'documents', 'param'
   ],
+  ProductFields4: [
+    'sku', 'amount', 'mfs', 'pn', 'description', 'attributes',
+    'priceStores', 'rohs', 'lead', 'imageUrl', 'category', 'currency',
+    'pkg', 'documents', 'pkg_type'
+  ],
   ProductFullFields: [
     'sku', 'amount', 'mfs', 'pn', 'description', 'attributes',
     'priceStores', 'rohs', 'lead', 'imageUrl', 'category', 'currency',

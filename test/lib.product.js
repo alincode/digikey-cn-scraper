@@ -2,7 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 import {
-  ProductFields, ProductFields2, ProductFields3, ProductFullFields
+  ProductFields, ProductFields2, ProductFields3, ProductFields4,
+  ProductFullFields
 }
 from './field';
 
@@ -186,6 +187,25 @@ describe('product page', function() {
       );
       let result = await digikey.getResult();
       result.should.have.keys(ProductFields3);
+      checklist(result);
+      result.documents.should.be.a('array');
+      result.documents.length.should.above(0);
+      done();
+    } catch (e) {
+      done(e);
+    }
+  });
+
+  it('case 9 - 不再生產的版本', async(done) => {
+    try {
+      let html = await getHtml(
+        'sample9.html'
+      );
+      let digikey = new Digikey(html,
+        'http://www.digikey.com.cn/search/zh/163-7010-0102/163-7010-0102-ND?recordId=3426657'
+      );
+      let result = await digikey.getResult();
+      result.should.have.keys(ProductFields4);
       checklist(result);
       result.documents.should.be.a('array');
       result.documents.length.should.above(0);
